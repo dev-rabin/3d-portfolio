@@ -5,10 +5,9 @@ import Island from '../models/Island';
 import Sky from '../models/Sky';
 import Bird from '../models/Bird';
 import Plane from '../models/Plane';
+import HomeInfo from '../components/HomeInfo';
 
-{/* <div className='absolute top-28 left-0 right-0 z-10 flex items-center justify-center'>
-      POPUP
-    </div> */}
+{/*  */ }
 const Home = () => {
 
   const [isRotating, setIsRotating] = useState(false);
@@ -46,6 +45,11 @@ const Home = () => {
 
   return (
     <section className='w-full h-screen relative'>
+
+      <div className='absolute top-28 left-0 right-0 z-10 flex items-center justify-center'>
+       {currentStage && <HomeInfo currentStage={currentStage}/>}
+      </div>
+
       <Canvas className={`w-full h-screen bg-transparent ${isRotating ? 'cursor-grabbing' : 'cursor-grab'}`}
         camera={{ near: 0.1, far: 1000 }}
       >
@@ -57,9 +61,9 @@ const Home = () => {
             groundColor="#000000"
             intensity={1}
           />
-          <Bird/>
-          <Sky 
-          isRotating={isRotating}/>
+          <Bird />
+          <Sky
+            isRotating={isRotating} />
 
           <Island
             position={islandPosition}
@@ -73,7 +77,7 @@ const Home = () => {
             planeScale={planeScale}
             planePosition={planePosition}
             isRotating={isRotating}
-            rotation={[0,20,0]}
+            rotation={[0, 20, 0]}
           />
         </Suspense>
       </Canvas>
