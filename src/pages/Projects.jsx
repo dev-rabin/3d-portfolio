@@ -39,6 +39,7 @@ const Projects = () => {
               </p>
               <div className='mt-5 flex gap-2 font-poppins items-center'>
                 <Link
+                  to={project.link}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='font-semibold text-blue-600'>
@@ -55,7 +56,7 @@ const Projects = () => {
         ))}
 
         <hr className='border-slate-200' />
-        <CTA/>
+        <CTA />
       </div>
     </section>
   )

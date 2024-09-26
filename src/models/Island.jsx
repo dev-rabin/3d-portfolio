@@ -1,6 +1,6 @@
 import React, { useRef,useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { events, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import {a} from "@react-spring/three"
 
 import IslandScene from "../assets/3d/island.glb";
@@ -16,8 +16,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props}) => {
   const rotationSpeed = useRef(0);
   const dampingFactor = 0.95;
 
-
-
+  
   const handlePointerDown = (event) => {
     event.stopPropagation();
     event.preventDefault();
@@ -78,6 +77,35 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props}) => {
   };
 
 
+  const handleTouchStart = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRotating(true);
+  
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    lastX.current = clientX;
+  }
+  
+  const handleTouchEnd = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRotating(false);
+  }
+  
+  const handleTouchMove = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  
+    if (isRotating) {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const delta = (clientX - lastX.current) / viewport.width;
+  
+      islandRef.current.rotation.y += delta * 0.1 * Math.PI;
+      lastX.current = clientX;
+      rotationSpeed.current = delta * 0.1 * Math.PI;
+    }
+  }
+
   useFrame(() => {
     if (!isRotating) {
       rotationSpeed.current *= dampingFactor;
@@ -116,15 +144,22 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props}) => {
     canvas.addEventListener('pointerdown', handlePointerDown);
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerup', handlePointerUp);
-    document.addEventListener('keyup', handleKeyUp);
-    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('keydown', handleKeyDown);
+    canvas.addEventListener('touchstart', handleTouchStart);
+    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchmove', handleTouchMove);
 
     return () => {
       canvas.removeEventListener('pointerdown', handlePointerDown);
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerup', handlePointerUp);
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+
     }
 
   },[gl, handlePointerMove,handlePointerDown,handlePointerUp])
